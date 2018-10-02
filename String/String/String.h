@@ -52,7 +52,7 @@ public:
 		strcpy(newString, str);
 		strcat(newString, string.str);
 		clear();
-		num_allocated = newAllocated;
+		num_allocated = newAllocated + 1;
 		str = newString;
 	}
 
