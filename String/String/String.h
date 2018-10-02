@@ -12,17 +12,18 @@ public:
 	String() {}
 
 	String(const char* string) : 
-		num_allocated(strlen(string)), 
-		str(new char[num_allocated + 1])
+		mem_allocated(strlen(string) + 1),
+
+		str(new char[mem_allocated])
 	{
-		strcpy(str, string);
+		strcpy_s(str, mem_allocated, string);
 	}
 
-	String(const String &string) : 
-		num_allocated(string.num_allocated),
-		str(new char[num_allocated + 1])
+	String(const String &string) :
+		mem_allocated(string.mem_allocated + 1),
+		str(new char[mem_allocated])
 	{
-		strcpy(str, string.str);
+		strcpy_s(str, mem_allocated, string.str);
 	}
 	
 	//Destructor
@@ -32,32 +33,36 @@ public:
 
 	//Methods
 	bool is_empty() {
-		return num_allocated == 0;
+		return mem_allocated == 0;
 	}
 	
 	void clear() {
-		delete str;
-		str = nullptr;
-		num_allocated = 0;
+		if (str != nullptr) {
+			delete[] str;
+			str = nullptr;
+			mem_allocated = 0;
+		}
 	}	
 
-	uint allocatedSpace() {
-		return num_allocated;
+	uint length() {
+		if (str != nullptr)
+			return strlen(str);
 	}
 	
 	//Operators
 	void operator+=(String &string) {
-		uint newAllocated = num_allocated + strlen(string.str);
-		char* newString = new char[newAllocated + 1];
+		uint newAllocated = mem_allocated + strlen(string.str) + 1;
+		char* newString = new char[newAllocated];
 		strcpy(newString, str);
 		strcat(newString, string.str);
 		clear();
-		num_allocated = newAllocated + 1;
+		mem_allocated = newAllocated;
 		str = newString;
 	}
 
 	void operator=(String &string) {
-		num_allocated += strlen(string.str);
+		clear();
+		mem_allocated = strlen(string.str);
 		str = string.str;
 	}
 
@@ -65,7 +70,7 @@ public:
 		return (str == string.str);
 	}
 
-	String operator+(String &string) {
+	String operator+(String &string) const {
 		String newString(str);
 		newString += string;
 		return newString;
@@ -73,7 +78,7 @@ public:
 
 private:
 	char* str = nullptr;
-	uint num_allocated = 0;
+	uint mem_allocated = 0;
 };
 
 #endif // __STRING_H__
