@@ -31,8 +31,27 @@ public:
 	}
 
 	//Methods
+	bool is_empty() {
+		return num_allocated == 0;
+	}
+	
 	void clear() {
+		delete str;
+		str = nullptr;
+		num_allocated = 0;
+	}	
+	
+	//Operators
+	void operator=(String &string) {
+		str = string.str;
+	}
 
+	void operator+=(String &string) {
+		
+	}
+
+	bool operator==(String &string) const {
+		return (str == string.str);
 	}
 
 private:
